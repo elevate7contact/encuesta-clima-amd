@@ -1,0 +1,1 @@
+{ "name": "encuesta-clima-amd", "private": true, "version": "1.0.0", "description": "Encuesta de clima y cultura AMD (HTML estático + función /api/lectura)" }
