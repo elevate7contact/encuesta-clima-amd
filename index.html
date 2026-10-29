@@ -457,9 +457,9 @@ function askAI(){
   var prompt='Eres analista de clima organizacional de AMD Agencia Marketing Digital. Con base SOLO en los datos de abajo, escribe en español, con tono cercano y directo: 1) Aspectos positivos, 2) Alertas, 3) Recomendaciones (máximo 5, accionables). Reglas del cálculo: promotores = respuesta 5, pasivos = 4, detractores = 1 a 3; eNPS = % promotores − % detractores, entero entre −100 y +100. Si hay datos de inicial y de cierre, comenta el cambio. No inventes cifras ni causas que los datos no muestren. Máximo 250 palabras, sin tablas.\n\nDATOS (JSON):\n'+JSON.stringify(pack)+'\n\nRESPUESTAS ABIERTAS (anónimas):\n'+ab.slice(0,60).join('\n');
   S.aiBusy=true;S.aiErr='';render();
   fetch('/api/lectura',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pin:S.pinValue,prompt:prompt})})
-   .then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error((j&&j.error)||'http');return j})})
+   .then(function(r){return r.json().catch(function(){return {error:'respuesta inesperada del servidor (HTTP '+r.status+')'}}).then(function(j){if(!r.ok)throw new Error((j&&j.error)||('HTTP '+r.status));return j})})
    .then(function(j){S.ai=j.text||'';S.aiBusy=false;render()})
-   .catch(function(e){S.aiBusy=false;S.aiErr=(e&&e.message&&e.message.indexOf('clave')>=0)?'La clave ya no es válida. Vuelve a entrar al panel.':'No pudimos generar la lectura ahora. Inténtalo de nuevo en un momento.';render()})}
+   .catch(function(e){S.aiBusy=false;S.aiErr=(e&&e.message&&e.message.indexOf('clave')>=0)?'La clave ya no es válida. Vuelve a entrar al panel.':'No pudimos generar la lectura: '+((e&&e.message)||'error desconocido')+'.';render()})}
 
 /* arranque */
 if(location.hash==='#resultados')S.view='results';
